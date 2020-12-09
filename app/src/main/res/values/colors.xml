@@ -5,4 +5,11 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <!-- Dark theme colors -->
+    <color name="colorBackgroundDark">#000</color>
+    <color name="colorAppBar">#023</color>
+    <color name="colorText">#BBB</color>
+    <color name="colorTextSecondary">#999</color>
+    <color name="colorButton">#555</color>
 </resources>

@@ -3,20 +3,29 @@ package com.woodbridge.weather_app;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.preference.PreferenceManager;
+/*import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;*/
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -60,9 +69,18 @@ public class WeatherController extends AppCompatActivity {
     LocationManager mLocationManager;
     LocationListener mLocationListener;
 
+    private boolean mDarkTheme;
+    private SharedPreferences mSharedPrefs;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mDarkTheme = mSharedPrefs.getBoolean(SettingsFragment.PREFERENCE_THEME, false);
+        if (mDarkTheme) {
+            setTheme(R.style.DarkTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_controller_layout);
 
@@ -88,11 +106,27 @@ public class WeatherController extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.subject_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(WeatherController.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     // onResume() lifecycle callback:
     @Override
@@ -100,6 +134,12 @@ public class WeatherController extends AppCompatActivity {
         super.onResume();
         Log.d(LOGCAT_TAG, "onResume() called");
         if(mUseLocation) getWeatherForCurrentLocation();
+
+        // If theme changed, recreate the activity so theme is applied
+        boolean darkTheme = mSharedPrefs.getBoolean(SettingsFragment.PREFERENCE_THEME, false);
+        if (darkTheme != mDarkTheme) {
+            recreate();
+        }
     }
 
     // Callback received when a new city name is entered on the second screen.

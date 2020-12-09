@@ -7,6 +7,7 @@ public class WeatherDataModel {
 
     // Member variables that hold our relevant weather inforomation.
     private String mTemperature;
+    private String mTemperatureF;
     private String mCity;
     private String mIconName;
     private int mCondition;
@@ -26,8 +27,10 @@ public class WeatherDataModel {
 
             double tempResult = jsonObject.getJSONObject("main").getDouble("temp") - 273.15;
             int roundedValue = (int) Math.rint(tempResult);
+            int roundedValueF = (int) Math.rint((tempResult * 9 / 5) + 32);
 
             weatherData.mTemperature = Integer.toString(roundedValue);
+            weatherData.mTemperatureF = Integer.toString(roundedValueF);
 
             return weatherData;
 
@@ -72,7 +75,7 @@ public class WeatherDataModel {
     // Getter methods for temperature, city, and icon name:
 
     public String getTemperature() {
-        return mTemperature + "°";
+        return mTemperature + "°C/" + mTemperatureF + "°F";
     }
 
     public String getCity() {
